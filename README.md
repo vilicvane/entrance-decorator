@@ -17,6 +17,8 @@ yarn add entrance-decorator
 ### Define entrances
 
 ```ts
+import {entrance} from 'entrance-decorator';
+
 export class Entrances {
   constructor(private url: string) {}
 
@@ -37,6 +39,8 @@ export class Entrances {
 ### Extend entrances
 
 ```ts
+import {entrance} from 'entrance-decorator';
+
 export class MobileEntrances extends Entrances {
   @entrance
   get mobileService() {
@@ -52,3 +56,11 @@ const entrances = new Entrances('https://makeflow.com');
 ```
 
 You may use the `entrances` object in whatever way you want. For example, we use `Context` in React (in a decorator manner) and use something like `entrances.launchServer()` in server-side applications.
+
+## What it does
+
+Cache and circular dependency check, nothing else.
+
+## License
+
+MIT License.
