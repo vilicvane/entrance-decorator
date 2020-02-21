@@ -1,0 +1,29 @@
+{
+  "name": "entrance-decorator",
+  "version": "0.1.0",
+  "description": "A minimal solution of dependency injection for projects that scale.",
+  "repository": "https://github.com/makeflow/entrance-decorator.git",
+  "author": "Chengdu Mufan Technology Co., Ltd.",
+  "license": "MIT",
+  "scripts": {
+    "build:library": "tsc --project src/library",
+    "build": "yarn build:library",
+    "lint:library": "eslint src/library --ext .ts,.tsx --max-warnings 0",
+    "lint:prettier": "prettier --check \"**/*.{ts,tsx,js,jsx,json,yml,md}\"",
+    "lint": "yarn lint:prettier && yarn lint:library"
+  },
+  "main": "bld/library/index.js",
+  "types": "bld/library/index.d.ts",
+  "files": [
+    "src/library/**/*.ts",
+    "bld/library",
+    "!*.tsbuildinfo"
+  ],
+  "devDependencies": {
+    "@magicspace/configs": "^0.2.3",
+    "@magicspace/eslint-plugin": "^0.1.17",
+    "eslint": "^6.8.0",
+    "prettier": "^1.19.1",
+    "typescript": "^3.8.2"
+  }
+}
