@@ -33,8 +33,6 @@ export function entrance(
         return cachedEntranceMap.get(key);
       }
 
-      let outermost = visitingKeySet.size === 0;
-
       if (visitingKeySet.has(key)) {
         throw new Error(
           `Circular entrances: ${[...visitingKeySet, key].join(' -> ')}`,
@@ -45,11 +43,9 @@ export function entrance(
 
       let entrance = getter.call(this) as unknown;
 
-      cachedEntranceMap.set(key, entrance);
+      visitingKeySet.delete(key);
 
-      if (outermost) {
-        visitingKeySet.clear();
-      }
+      cachedEntranceMap.set(key, entrance);
 
       return entrance;
     },
