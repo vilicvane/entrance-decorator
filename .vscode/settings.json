@@ -17,5 +17,10 @@
     "typescript",
     "typescriptreact"
   ],
-  "cSpell.words": ["Parens", "mufan", "tsbuildinfo"]
+  "cSpell.words": [
+    "Parens",
+    "boilerplates",
+    "mufan",
+    "tsbuildinfo"
+  ]
 }

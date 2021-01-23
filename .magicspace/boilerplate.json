@@ -9,7 +9,8 @@
         "name": "library"
       },
       {
-        "name": "test"
+        "name": "test",
+        "references": ["library"]
       }
     ]
   }
