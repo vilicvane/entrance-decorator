@@ -36,15 +36,22 @@ export class Entrances {
 }
 ```
 
-### Extend entrances
+### Extend/override entrances
 
 ```ts
 import {entrance} from 'entrance-decorator';
 
 export class MobileEntrances extends Entrances {
+  // Extend entrance
   @entrance
   get mobileService() {
     return new MobileService(this.errorService);
+  }
+
+  // Override entrance
+  @entrance
+  get uiService() {
+    return new MobileUIService(this.errorService);
   }
 }
 ```
