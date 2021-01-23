@@ -1,0 +1,110 @@
+import {entrance} from '../library';
+
+test('should work', () => {
+  let invocations: string[] = [];
+
+  class Entrances {
+    @entrance
+    get foo() {
+      invocations.push('foo');
+
+      return {
+        id: 'foo',
+      };
+    }
+
+    @entrance
+    get bar() {
+      invocations.push('bar');
+
+      return {
+        id: 'bar',
+      };
+    }
+  }
+
+  let entrances = new Entrances();
+
+  expect(entrances.foo).toEqual({id: 'foo'});
+  expect(entrances.bar).toEqual({id: 'bar'});
+  expect(entrances.foo === entrances.foo).toBe(true);
+  expect(entrances.foo === entrances.bar).toBe(false);
+  expect(invocations).toEqual(['foo', 'bar']);
+});
+
+test('should work with subclasses', () => {
+  let invocations: string[] = [];
+
+  class Entrances {
+    @entrance
+    get foo() {
+      invocations.push('foo');
+
+      return {
+        id: 'foo',
+      };
+    }
+
+    @entrance
+    get yoha() {
+      invocations.push('yoha');
+
+      return {
+        id: 'yoha',
+      };
+    }
+  }
+
+  class ExtendedEntrances extends Entrances {
+    @entrance
+    get bar() {
+      invocations.push('bar');
+
+      return {
+        id: 'bar',
+      };
+    }
+
+    @entrance
+    get yoha() {
+      invocations.push('extended-yoha');
+
+      return {
+        id: 'extended-yoha',
+      };
+    }
+  }
+
+  let entrances = new ExtendedEntrances();
+
+  expect(entrances.foo).toEqual({id: 'foo'});
+  expect(entrances.bar).toEqual({id: 'bar'});
+  expect(entrances.yoha).toEqual({id: 'extended-yoha'});
+  expect(entrances.foo === entrances.foo).toBe(true);
+  expect(entrances.foo === entrances.bar).toBe(false);
+  expect(entrances.foo === entrances.yoha).toBe(false);
+  expect(invocations).toEqual(['foo', 'bar', 'extended-yoha']);
+});
+
+test('should throw on circular entrances', () => {
+  class Entrances {
+    @entrance
+    get foo(): unknown {
+      return this.yoha;
+    }
+
+    @entrance
+    get bar(): unknown {
+      return this.foo;
+    }
+
+    @entrance
+    get yoha(): unknown {
+      return this.foo;
+    }
+  }
+
+  let entrances = new Entrances();
+
+  expect(() => entrances.yoha).toThrow('Circular entrances:');
+});
