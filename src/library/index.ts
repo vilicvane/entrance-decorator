@@ -34,14 +34,29 @@ export function entrance(
       }
 
       if (visitingKeySet.has(key)) {
-        throw new Error(
-          `Circular entrances: ${[...visitingKeySet, key].join(' -> ')}`,
-        );
+        let circularChainText = [...visitingKeySet, key].join(' -> ');
+
+        // This `clear()` here should be redundant: if the code reaches here,
+        // this is then not the outermost getter. The set will be cleared by the
+        // upper try...catch.
+        visitingKeySet.clear();
+
+        throw new Error(`Circular entrances: ${circularChainText}`);
       }
 
       visitingKeySet.add(key);
 
-      let entrance = getter.call(this) as unknown;
+      let entrance;
+
+      try {
+        entrance = getter.call(this) as unknown;
+      } catch (error) {
+        // We probably only need to clear the set in the uppermost try...catch.
+        // But to write less condition, we do `clear()` in every one of them.
+        visitingKeySet.clear();
+
+        throw error;
+      }
 
       visitingKeySet.delete(key);
 

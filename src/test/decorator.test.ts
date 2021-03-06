@@ -106,5 +106,24 @@ test('should throw on circular entrances', () => {
 
   let entrances = new Entrances();
 
-  expect(() => entrances.yoha).toThrow('Circular entrances:');
+  expect(() => entrances.yoha).toThrow(
+    /^Circular entrances: yoha -> foo -> yoha$/,
+  );
+});
+
+test('should clear visiting set if getter throws', () => {
+  class Entrances {
+    @entrance
+    get foo(): unknown {
+      throw new Error('foo error');
+    }
+  }
+
+  let entrances = new Entrances();
+
+  expect(() => entrances.foo).toThrow('foo error');
+
+  // Throw twice, if visiting set was not cleared, this should result in
+  // circular entrances error.
+  expect(() => entrances.foo).toThrow('foo error');
 });
