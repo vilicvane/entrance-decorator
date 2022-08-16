@@ -66,7 +66,7 @@ test('should work with subclasses', () => {
     }
 
     @entrance
-    get yoha() {
+    override get yoha() {
       invocations.push('extended-yoha');
 
       return {
