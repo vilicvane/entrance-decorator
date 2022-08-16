@@ -3,7 +3,7 @@
   "compilerOptions": {
     "composite": true,
 
-    "types": ["jest"],
+    "types": ["node", "jest"],
     "experimentalDecorators": true,
 
     "outDir": "../../bld/test"

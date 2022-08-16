@@ -4761,7 +4761,7 @@ tslang@^0.1.22:
   resolved "https://registry.yarnpkg.com/tslang/-/tslang-0.1.23.tgz#cf79359a4ad1f8d1f04e03d4b42340974c0b651d"
   integrity sha512-V8922AQT5Ij09dO+CjWaDum5nRqllwWQfvLIgSm/Twjel9XAAGRXDd7qqR8r8wkzbTX2UwdMIeWca9PoufpL6Q==
 
-tslang@^0.1.25:
+tslang@^0.1.25, tslang@^0.1.27:
   version "0.1.27"
   resolved "https://registry.yarnpkg.com/tslang/-/tslang-0.1.27.tgz#3fabd7d0f306e17db82ebd1523d3cb20ba60a190"
   integrity sha512-/ni514EDCLP61/ULWh77VN47OGQ6tW14BqsebgipOhjf9ufhPEbNZTyc9q2y9mNnSai/ApWobKjAOfxhhOK2PA==
