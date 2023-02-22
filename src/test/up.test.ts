@@ -1,6 +1,6 @@
 import type {AssertTrue, IsEqual} from 'tslang';
 
-import {entrance, up} from '../library';
+import {entrance, up} from '../../bld/library/cjs';
 
 test('should work', async () => {
   class Entrances {
@@ -20,13 +20,13 @@ test('should work', async () => {
     }
   }
 
-  let entrances_1 = await up(new Entrances(), ['*']);
+  const entrances_1 = await up(new Entrances(), ['*']);
 
   expect(entrances_1.foo).toEqual(123);
   expect(entrances_1.bar).toEqual(579);
   expect(entrances_1.far).toEqual('abc');
 
-  let entrances_2 = await up(new Entrances(), {
+  const entrances_2 = await up(new Entrances(), {
     includes: ['*ar'],
     excludes: ['far'],
   });

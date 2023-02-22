@@ -1,7 +1,7 @@
-import {entrance} from '../library';
+import {entrance} from '../../bld/library/cjs';
 
 test('should work', () => {
-  let invocations: string[] = [];
+  const invocations: string[] = [];
 
   class Entrances {
     @entrance
@@ -23,7 +23,7 @@ test('should work', () => {
     }
   }
 
-  let entrances = new Entrances();
+  const entrances = new Entrances();
 
   expect(entrances.foo).toEqual({id: 'foo'});
   expect(entrances.bar).toEqual({id: 'bar'});
@@ -33,7 +33,7 @@ test('should work', () => {
 });
 
 test('should work with subclasses', () => {
-  let invocations: string[] = [];
+  const invocations: string[] = [];
 
   class Entrances {
     @entrance
@@ -75,7 +75,7 @@ test('should work with subclasses', () => {
     }
   }
 
-  let entrances = new ExtendedEntrances();
+  const entrances = new ExtendedEntrances();
 
   expect(entrances.foo).toEqual({id: 'foo'});
   expect(entrances.bar).toEqual({id: 'bar'});
@@ -104,7 +104,7 @@ test('should throw on circular entrances', () => {
     }
   }
 
-  let entrances = new Entrances();
+  const entrances = new Entrances();
 
   expect(() => entrances.yoha).toThrow(
     /^Circular entrances: yoha -> foo -> yoha$/,
@@ -119,7 +119,7 @@ test('should clear visiting set if getter throws', () => {
     }
   }
 
-  let entrances = new Entrances();
+  const entrances = new Entrances();
 
   expect(() => entrances.foo).toThrow('foo error');
 

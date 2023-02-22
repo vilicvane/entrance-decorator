@@ -1,12 +1,13 @@
 {
-  "extends": "@mufan/code-boilerplates/typescript",
+  "boilerplate": "@mufan/code-boilerplates/typescript",
   "options": {
     "name": "entrance-decorator",
     "license": "MIT",
     "author": "Chengdu Mufan Technology Co., Ltd.",
-    "tsProjects": [
+    "projects": [
       {
-        "name": "library"
+        "name": "library",
+        "module": ["cjs", "esm"]
       },
       {
         "name": "test",

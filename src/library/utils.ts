@@ -20,16 +20,16 @@ export async function up(
   entrances: object,
   ...args: [string[]] | [{includes: string[]; excludes: string[]}]
 ): Promise<object> {
-  let [{includes, excludes}] = Array.isArray(args[0])
+  const [{includes, excludes}] = Array.isArray(args[0])
     ? [{includes: args[0], excludes: []}]
     : [args[0]];
 
-  let includeMatchers = includes.map(include => buildMatcher(include));
-  let excludeMatchers = excludes.map(exclude => buildMatcher(exclude));
+  const includeMatchers = includes.map(include => buildMatcher(include));
+  const excludeMatchers = excludes.map(exclude => buildMatcher(exclude));
 
-  let entryPromises: Promise<[string, unknown]>[] = [];
+  const entryPromises: Promise<[string, unknown]>[] = [];
 
-  for (let key in entrances) {
+  for (const key in entrances) {
     if (
       !includeMatchers.some(matcher => matcher(key)) ||
       excludeMatchers.some(matcher => matcher(key))
@@ -69,13 +69,13 @@ type KeyPattern<TKeyPattern extends string> =
     : TKeyPattern;
 
 function buildMatcher(pattern: string): (key: string) => boolean {
-  let starIndex = pattern.indexOf('*');
+  const starIndex = pattern.indexOf('*');
 
   if (starIndex < 0) {
     return key => key === pattern;
   } else {
-    let prefix = pattern.slice(0, starIndex);
-    let postfix = pattern.slice(starIndex + 1);
+    const prefix = pattern.slice(0, starIndex);
+    const postfix = pattern.slice(starIndex + 1);
 
     return key => key.startsWith(prefix) && key.endsWith(postfix);
   }

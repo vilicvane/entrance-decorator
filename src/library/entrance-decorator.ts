@@ -28,14 +28,14 @@ export function entrance(
         entranceInstanceDataMap.set(this, data);
       }
 
-      let {cachedEntranceMap, visitingKeySet} = data;
+      const {cachedEntranceMap, visitingKeySet} = data;
 
       if (cachedEntranceMap.has(key)) {
         return cachedEntranceMap.get(key);
       }
 
       if (visitingKeySet.has(key)) {
-        let circularChainText = [...visitingKeySet, key].join(' -> ');
+        const circularChainText = [...visitingKeySet, key].join(' -> ');
 
         // This `clear()` here should be redundant: if the code reaches here,
         // this is then not the outermost getter. The set will be cleared by the

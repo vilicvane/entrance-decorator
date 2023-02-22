@@ -6,8 +6,9 @@
   "author": "Chengdu Mufan Technology Co., Ltd.",
   "license": "MIT",
   "exports": {
-    "types": "./bld/library/index.d.ts",
-    "require": "./bld/library/index.js"
+    "types": "./bld/library/cjs/index.d.ts",
+    "import": "./bld/library/esm/index.js",
+    "require": "./bld/library/cjs/index.js"
   },
   "scripts": {
     "build": "rimraf ./bld && tsc --build",
@@ -16,18 +17,18 @@
     "test": "yarn lint-prettier && yarn build && yarn lint && yarn jest"
   },
   "dependencies": {
-    "tslib": "^2.4.0"
+    "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "@mufan/code": "^0.2.14",
-    "@mufan/eslint-plugin": "^0.1.68",
+    "@mufan/code": "^0.2.16",
+    "@mufan/eslint-plugin": "^0.1.77",
     "@types/jest": "^26.0.20",
-    "eslint": "^8.22.0",
+    "eslint": "^8.34.0",
     "jest": "^26.6.3",
-    "prettier": "^2.7.1",
+    "prettier": "^2.8.4",
     "rimraf": "^3.0.2",
     "run-in-every": "^0.2.0",
     "tslang": "^0.1.27",
-    "typescript": "^4.7.4"
+    "typescript": "^4.9.5"
   }
 }
