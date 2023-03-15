@@ -1,21 +1,21 @@
 export function up<
   TEntrances extends object,
-  TInclude extends __EntranceKey<TEntrances> | EntranceKeyPattern,
-  TExclude extends __EntranceKey<TEntrances> | EntranceKeyPattern,
+  TInclude extends EntranceKey<TEntrances> | EntranceKeyPattern,
+  TExclude extends EntranceKey<TEntrances> | EntranceKeyPattern,
 >(
   entrances: TEntrances,
   match: {
     includes: TInclude[];
     excludes: TExclude[];
   },
-): Promise<__PickEntrances<TEntrances, TInclude, TExclude>>;
+): Promise<UpEntrances<TEntrances, TInclude, TExclude>>;
 export function up<
   TEntrances extends object,
-  TInclude extends __EntranceKey<TEntrances> | EntranceKeyPattern,
+  TInclude extends EntranceKey<TEntrances> | EntranceKeyPattern,
 >(
   entrances: TEntrances,
   includes: TInclude[],
-): Promise<__PickEntrances<TEntrances, TInclude, never>>;
+): Promise<UpEntrances<TEntrances, TInclude, never>>;
 export async function up(
   entrances: object,
   ...args: [string[]] | [{includes: string[]; excludes: string[]}]
@@ -27,7 +27,7 @@ export async function up(
   const includeMatchers = includes.map(include => buildMatcher(include));
   const excludeMatchers = excludes.map(exclude => buildMatcher(exclude));
 
-  const entryPromises: Promise<[string, unknown]>[] = [];
+  const entryPromises: Promise<[string, PropertyDescriptor]>[] = [];
 
   for (const key in entrances) {
     if (
@@ -38,29 +38,37 @@ export async function up(
     }
 
     entryPromises.push(
-      Promise.resolve((entrances as any)[key]).then(value => [key, value]),
+      Promise.resolve((entrances as any)[key]).then(value => [
+        key,
+        {
+          get() {
+            return value;
+          },
+        },
+      ]),
     );
   }
 
-  return Object.fromEntries(await Promise.all(entryPromises));
+  return Object.create(
+    entrances,
+    Object.fromEntries(await Promise.all(entryPromises)),
+  );
 }
 
 export type EntranceKeyPattern = `${string}*${string}`;
 
-type __EntranceKey<TEntrances extends object> = Extract<
-  keyof TEntrances,
-  string
->;
+type EntranceKey<TEntrances extends object> = Extract<keyof TEntrances, string>;
 
-type __PickEntrances<
+type UpEntrances<
   TEntrances extends object,
   TInclude extends string,
   TExclude extends string,
 > = {
-  [TKey in Exclude<
-    Extract<keyof TEntrances, KeyPattern<TInclude>>,
-    KeyPattern<TExclude>
-  >]: Awaited<TEntrances[TKey]>;
+  [TKey in keyof TEntrances]: TKey extends KeyPattern<TInclude>
+    ? TKey extends KeyPattern<TExclude>
+      ? TEntrances[TKey]
+      : Awaited<TEntrances[TKey]>
+    : TEntrances[TKey];
 };
 
 type KeyPattern<TKeyPattern extends string> =

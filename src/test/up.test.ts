@@ -31,9 +31,9 @@ test('should work', async () => {
     excludes: ['far'],
   });
 
-  expect((entrances_2 as any).foo).toEqual(undefined);
+  await expect((entrances_2 as any).foo).resolves.toEqual(123);
   expect(entrances_2.bar).toEqual(579);
-  expect((entrances_2 as any).far).toEqual(undefined);
+  expect((entrances_2 as any).far).toEqual('abc');
 
   type _ =
     | AssertTrue<
@@ -50,7 +50,9 @@ test('should work', async () => {
         IsEqual<
           typeof entrances_2,
           {
+            foo: Promise<number>;
             bar: number;
+            far: string;
           }
         >
       >;
