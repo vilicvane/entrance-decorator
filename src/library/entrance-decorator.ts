@@ -1,9 +1,13 @@
-interface EntranceInstanceData {
+const instanceDataSymbol = Symbol();
+
+interface EntrancesInstanceData {
   visitingKeySet: Set<string>;
   cachedEntranceMap: Map<string, unknown>;
 }
 
-const entranceInstanceDataMap = new WeakMap<object, EntranceInstanceData>();
+interface EntrancesInstance {
+  [instanceDataSymbol]?: EntrancesInstanceData;
+}
 
 export function entrance(
   _prototype: object,
@@ -16,8 +20,8 @@ export function entrance(
 
   return {
     enumerable: true,
-    get() {
-      let data = entranceInstanceDataMap.get(this);
+    get(this: EntrancesInstance) {
+      let data = this[instanceDataSymbol];
 
       if (!data) {
         data = {
@@ -25,7 +29,7 @@ export function entrance(
           cachedEntranceMap: new Map(),
         };
 
-        entranceInstanceDataMap.set(this, data);
+        getEntrancesInstance(this)[instanceDataSymbol] = data;
       }
 
       const {cachedEntranceMap, visitingKeySet} = data;
@@ -66,4 +70,19 @@ export function entrance(
       return entrance;
     },
   };
+}
+
+function getEntrancesInstance(object: object): EntrancesInstance;
+function getEntrancesInstance(object: object): object {
+  return getInstance(object)!;
+
+  function getInstance(object: object): object | undefined {
+    const prototype = Object.getPrototypeOf(object);
+
+    if (prototype === null) {
+      return undefined;
+    }
+
+    return getInstance(prototype) ?? object;
+  }
 }

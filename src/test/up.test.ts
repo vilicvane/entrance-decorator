@@ -57,3 +57,47 @@ test('should work', async () => {
         >
       >;
 });
+
+test('should handle instance prototype chain', async () => {
+  const invocations: string[] = [];
+
+  class Entrances {
+    @entrance
+    get baz() {
+      invocations.push('baz');
+      return this.foo;
+    }
+
+    @entrance
+    get foo() {
+      invocations.push('foo');
+      return this.fooAndBar.foo;
+    }
+
+    @entrance
+    get bar() {
+      invocations.push('bar');
+      return this.fooAndBar.bar;
+    }
+
+    @entrance
+    get fooAndBar() {
+      invocations.push('foo-bar');
+
+      return {
+        foo: 'foo',
+        bar: 'bar',
+      };
+    }
+  }
+
+  const entrances = await up(new Entrances(), {
+    includes: ['*'],
+    excludes: ['foo', 'bar', 'fooAndBar'],
+  });
+
+  expect(entrances.foo).toBe('foo');
+  expect(entrances.fooAndBar).toEqual({foo: 'foo', bar: 'bar'});
+  expect(entrances.bar).toBe('bar');
+  expect(invocations).toEqual(['baz', 'foo', 'foo-bar', 'bar']);
+});

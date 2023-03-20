@@ -1,2 +1,2 @@
 export * from './entrance-decorator';
-export * from './utils';
+export * from './up';
