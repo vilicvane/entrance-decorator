@@ -1,6 +1,13 @@
 export function up<
   TEntrances extends object,
   TInclude extends EntranceKey<TEntrances> | EntranceKeyPattern,
+>(
+  entrances: TEntrances,
+  includes?: TInclude[],
+): Promise<UpEntrances<TEntrances, TInclude, never>>;
+export function up<
+  TEntrances extends object,
+  TInclude extends EntranceKey<TEntrances> | EntranceKeyPattern,
   TExclude extends EntranceKey<TEntrances> | EntranceKeyPattern,
 >(
   entrances: TEntrances,
@@ -9,20 +16,13 @@ export function up<
     excludes: TExclude[];
   },
 ): Promise<UpEntrances<TEntrances, TInclude, TExclude>>;
-export function up<
-  TEntrances extends object,
-  TInclude extends EntranceKey<TEntrances> | EntranceKeyPattern,
->(
-  entrances: TEntrances,
-  includes: TInclude[],
-): Promise<UpEntrances<TEntrances, TInclude, never>>;
 export async function up(
   entrances: object,
-  ...args: [string[]] | [{includes: string[]; excludes: string[]}]
+  arg: string[] | {includes: string[]; excludes: string[]} = ['*'],
 ): Promise<object> {
-  const [{includes, excludes}] = Array.isArray(args[0])
-    ? [{includes: args[0], excludes: []}]
-    : [args[0]];
+  const {includes, excludes} = Array.isArray(arg)
+    ? {includes: arg, excludes: []}
+    : arg;
 
   const includeMatchers = includes.map(include => buildMatcher(include));
   const excludeMatchers = excludes.map(exclude => buildMatcher(exclude));
