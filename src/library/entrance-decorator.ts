@@ -74,15 +74,29 @@ export function entrance(
 
 function getEntrancesInstance(object: object): EntrancesInstance;
 function getEntrancesInstance(object: object): object {
-  return getInstance(object)!;
+  const instance = getInstance(object);
 
-  function getInstance(object: object): object | undefined {
+  if (typeof instance === 'number') {
+    throw new Error('Invalid entrances object');
+  }
+
+  return instance;
+
+  function getInstance(object: object): object | number {
     const prototype = Object.getPrototypeOf(object);
 
     if (prototype === null) {
-      return undefined;
+      return 0;
     }
 
-    return getInstance(prototype) ?? object;
+    const instance = getInstance(prototype);
+
+    if (typeof instance === 'number') {
+      if (instance < 1) {
+        return instance + 1;
+      }
+    }
+
+    return object;
   }
 }

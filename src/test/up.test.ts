@@ -59,7 +59,7 @@ test('should work', async () => {
 });
 
 test('should handle instance prototype chain', async () => {
-  const invocations: string[] = [];
+  let invocations: string[] = [];
 
   class Entrances {
     @entrance
@@ -91,6 +91,15 @@ test('should handle instance prototype chain', async () => {
     }
   }
 
+  class XEntrances extends Entrances {
+    @entrance
+    get x() {
+      invocations.push('x');
+
+      return 'x';
+    }
+  }
+
   const entrances = await up(new Entrances(), {
     includes: ['*'],
     excludes: ['foo', 'bar', 'fooAndBar'],
@@ -100,4 +109,16 @@ test('should handle instance prototype chain', async () => {
   expect(entrances.fooAndBar).toEqual({foo: 'foo', bar: 'bar'});
   expect(entrances.bar).toBe('bar');
   expect(invocations).toEqual(['baz', 'foo', 'foo-bar', 'bar']);
+
+  invocations = [];
+
+  await up(new Entrances());
+
+  expect(invocations).toEqual(['baz', 'foo', 'foo-bar', 'bar']);
+
+  invocations = [];
+
+  await up(new XEntrances());
+
+  expect(invocations).toEqual(['x', 'baz', 'foo', 'foo-bar', 'bar']);
 });
