@@ -1,6 +1,6 @@
 {
   "name": "entrance-decorator",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "A minimal solution of dependency injection for projects that scale.",
   "repository": "https://github.com/makeflow/entrance-decorator.git",
   "author": "Chengdu Mufan Technology Co., Ltd.",
