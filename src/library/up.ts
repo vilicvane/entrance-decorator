@@ -4,6 +4,7 @@ export function up<
 >(
   entrances: TEntrances,
   includes?: TInclude[],
+  ref?: UpEntrances<TEntrances, TInclude, never>,
 ): Promise<UpEntrances<TEntrances, TInclude, never>>;
 export function up<
   TEntrances extends object,
@@ -15,10 +16,12 @@ export function up<
     includes: TInclude[];
     excludes: TExclude[];
   },
+  ref?: UpEntrances<TEntrances, TInclude, TExclude>,
 ): Promise<UpEntrances<TEntrances, TInclude, TExclude>>;
 export async function up(
   entrances: object,
   arg: string[] | {includes: string[]; excludes: string[]} = ['*'],
+  ref?: object,
 ): Promise<object> {
   const {includes, excludes} = Array.isArray(arg)
     ? {includes: arg, excludes: []}
@@ -49,17 +52,27 @@ export async function up(
     );
   }
 
-  return Object.create(
-    entrances,
-    Object.fromEntries(await Promise.all(entryPromises)),
-  );
+  if (ref) {
+    Object.setPrototypeOf(ref, entrances);
+
+    for (const [key, descriptor] of await Promise.all(entryPromises)) {
+      Object.defineProperty(ref, key, descriptor);
+    }
+
+    return ref;
+  } else {
+    return Object.create(
+      entrances,
+      Object.fromEntries(await Promise.all(entryPromises)),
+    );
+  }
 }
 
 export type EntranceKeyPattern = `${string}*${string}`;
 
 type EntranceKey<TEntrances extends object> = Extract<keyof TEntrances, string>;
 
-type UpEntrances<
+export type UpEntrances<
   TEntrances extends object,
   TInclude extends string,
   TExclude extends string,

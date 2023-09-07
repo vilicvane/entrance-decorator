@@ -1,5 +1,6 @@
 import type {AssertTrue, IsEqual} from 'tslang';
 
+import type {UpEntrances} from '../../bld/library/cjs';
 import {entrance, up} from '../../bld/library/cjs';
 
 test('should work', async () => {
@@ -26,14 +27,23 @@ test('should work', async () => {
   expect(entrances_1.bar).toEqual(579);
   expect(entrances_1.far).toEqual('abc');
 
-  const entrances_2 = await up(new Entrances(), {
-    includes: ['*ar'],
-    excludes: ['far'],
-  });
+  // eslint-disable-next-line @mufan/no-object-literal-type-assertion
+  const entrances_2_ref = {} as UpEntrances<Entrances, '*ar', 'far'>;
 
-  await expect((entrances_2 as any).foo).resolves.toEqual(123);
+  const entrances_2 = await up(
+    new Entrances(),
+    {
+      includes: ['*ar'],
+      excludes: ['far'],
+    },
+    entrances_2_ref,
+  );
+
+  expect(entrances_2_ref).toBe(entrances_2);
+
+  await expect(entrances_2.foo).resolves.toEqual(123);
   expect(entrances_2.bar).toEqual(579);
-  expect((entrances_2 as any).far).toEqual('abc');
+  expect(entrances_2.far).toEqual('abc');
 
   type _ =
     | AssertTrue<
