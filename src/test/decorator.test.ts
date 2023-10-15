@@ -1,9 +1,11 @@
-import {entrance} from '../../bld/library/cjs';
+import {entrance} from '../../bld/library/index.js';
 
 test('should work', () => {
   const invocations: string[] = [];
 
   class Entrances {
+    /* eslint-disable @typescript-eslint/explicit-function-return-type */
+
     @entrance
     get foo() {
       invocations.push('foo');
@@ -21,6 +23,8 @@ test('should work', () => {
         id: 'bar',
       };
     }
+
+    /* eslint-enable @typescript-eslint/explicit-function-return-type */
   }
 
   const entrances = new Entrances();
@@ -36,6 +40,8 @@ test('should work with subclasses', () => {
   const invocations: string[] = [];
 
   class Entrances {
+    /* eslint-disable @typescript-eslint/explicit-function-return-type */
+
     @entrance
     get foo() {
       invocations.push('foo');
@@ -53,9 +59,13 @@ test('should work with subclasses', () => {
         id: 'yoha',
       };
     }
+
+    /* eslint-enable @typescript-eslint/explicit-function-return-type */
   }
 
   class ExtendedEntrances extends Entrances {
+    /* eslint-disable @typescript-eslint/explicit-function-return-type */
+
     @entrance
     get bar() {
       invocations.push('bar');
@@ -73,6 +83,8 @@ test('should work with subclasses', () => {
         id: 'extended-yoha',
       };
     }
+
+    /* eslint-enable @typescript-eslint/explicit-function-return-type */
   }
 
   const entrances = new ExtendedEntrances();
@@ -88,6 +100,8 @@ test('should work with subclasses', () => {
 
 test('should throw on circular entrances', () => {
   class Entrances {
+    /* eslint-disable @typescript-eslint/explicit-function-return-type */
+
     @entrance
     get foo(): unknown {
       return this.yoha;
@@ -102,6 +116,8 @@ test('should throw on circular entrances', () => {
     get yoha(): unknown {
       return this.foo;
     }
+
+    /* eslint-enable @typescript-eslint/explicit-function-return-type */
   }
 
   const entrances = new Entrances();
@@ -113,10 +129,14 @@ test('should throw on circular entrances', () => {
 
 test('should clear visiting set if getter throws', () => {
   class Entrances {
+    /* eslint-disable @typescript-eslint/explicit-function-return-type */
+
     @entrance
     get foo(): unknown {
       throw new Error('foo error');
     }
+
+    /* eslint-enable @typescript-eslint/explicit-function-return-type */
   }
 
   const entrances = new Entrances();

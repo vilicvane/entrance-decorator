@@ -1,10 +1,12 @@
 import type {AssertTrue, IsEqual} from 'tslang';
 
-import type {UpEntrances} from '../../bld/library/cjs';
-import {entrance, up} from '../../bld/library/cjs';
+import type {UpEntrances} from '../../bld/library/index.js';
+import {entrance, up} from '../../bld/library/index.js';
 
 test('should work', async () => {
   class Entrances {
+    /* eslint-disable @typescript-eslint/explicit-function-return-type */
+
     @entrance
     get foo() {
       return Promise.resolve(123);
@@ -19,6 +21,8 @@ test('should work', async () => {
     get far() {
       return 'abc';
     }
+
+    /* eslint-enable @typescript-eslint/explicit-function-return-type */
   }
 
   const entrances_1 = await up(new Entrances(), ['*']);
@@ -27,7 +31,6 @@ test('should work', async () => {
   expect(entrances_1.bar).toEqual(579);
   expect(entrances_1.far).toEqual('abc');
 
-  // eslint-disable-next-line @mufan/no-object-literal-type-assertion
   const entrances_2_ref = {} as UpEntrances<Entrances, '*ar', 'far'>;
 
   const entrances_2 = await up(
@@ -45,7 +48,7 @@ test('should work', async () => {
   expect(entrances_2.bar).toEqual(579);
   expect(entrances_2.far).toEqual('abc');
 
-  type _ =
+  type _assert =
     | AssertTrue<
         IsEqual<
           typeof entrances_1,
@@ -72,6 +75,8 @@ test('should handle instance prototype chain', async () => {
   let invocations: string[] = [];
 
   class Entrances {
+    /* eslint-disable @typescript-eslint/explicit-function-return-type */
+
     @entrance
     get baz() {
       invocations.push('baz');
@@ -99,15 +104,21 @@ test('should handle instance prototype chain', async () => {
         bar: 'bar',
       };
     }
+
+    /* eslint-enable @typescript-eslint/explicit-function-return-type */
   }
 
   class XEntrances extends Entrances {
+    /* eslint-disable @typescript-eslint/explicit-function-return-type */
+
     @entrance
     get x() {
       invocations.push('x');
 
       return 'x';
     }
+
+    /* eslint-enable @typescript-eslint/explicit-function-return-type */
   }
 
   const entrances = await up(new Entrances(), {

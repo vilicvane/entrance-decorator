@@ -1,2 +1,2 @@
-export * from './entrance-decorator';
-export * from './up';
+export * from './entrance-decorator.js';
+export * from './up.js';
