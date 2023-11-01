@@ -2,10 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "composite": true,
-
     "types": ["node", "jest"],
-    "experimentalDecorators": true,
-
     "rootDir": ".",
     "outDir": "../../bld/test"
   },

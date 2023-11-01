@@ -1,75 +1,81 @@
-const instanceDataSymbol = Symbol();
+const instance_data = Symbol();
+
+export const decorated_getter_flag = Symbol();
 
 type EntrancesInstanceData = {
-  visitingKeySet: Set<string>;
-  cachedEntranceMap: Map<string, unknown>;
+  visitingNameSet: Set<string | symbol>;
+  cachedEntranceMap: Map<string | symbol, unknown>;
 };
 
 type EntrancesInstance = {
-  [instanceDataSymbol]?: EntrancesInstanceData;
+  [instance_data]?: EntrancesInstanceData;
 };
 
+export function entrance<T extends () => unknown>(
+  getter: T,
+  context: ClassGetterDecoratorContext,
+): T;
 export function entrance(
-  _prototype: object,
-  key: string,
-  {get: getter}: PropertyDescriptor,
-): PropertyDescriptor {
-  if (!getter) {
-    throw new Error('Decorator `@entrance` applies to getter only');
+  getter: () => unknown,
+  {kind, name}: ClassGetterDecoratorContext,
+): typeof getter {
+  if (kind !== 'getter') {
+    throw new Error('Decorator `@entrance` only applies to getters');
   }
 
-  return {
-    enumerable: true,
-    get(this: EntrancesInstance) {
-      let data = this[instanceDataSymbol];
+  decorated[decorated_getter_flag] = true;
 
-      if (!data) {
-        data = {
-          visitingKeySet: new Set(),
-          cachedEntranceMap: new Map(),
-        };
+  return decorated;
 
-        getEntrancesInstance(this)[instanceDataSymbol] = data;
-      }
+  function decorated(this: EntrancesInstance): unknown {
+    let data = this[instance_data];
 
-      const {cachedEntranceMap, visitingKeySet} = data;
+    if (!data) {
+      data = {
+        visitingNameSet: new Set(),
+        cachedEntranceMap: new Map(),
+      };
 
-      if (cachedEntranceMap.has(key)) {
-        return cachedEntranceMap.get(key);
-      }
+      getEntrancesInstance(this)[instance_data] = data;
+    }
 
-      if (visitingKeySet.has(key)) {
-        const circularChainText = [...visitingKeySet, key].join(' -> ');
+    const {cachedEntranceMap, visitingNameSet} = data;
 
-        // This `clear()` here should be redundant: if the code reaches here,
-        // this is then not the outermost getter. The set will be cleared by the
-        // upper try...catch.
-        visitingKeySet.clear();
+    if (cachedEntranceMap.has(name)) {
+      return cachedEntranceMap.get(name);
+    }
 
-        throw new Error(`Circular entrances: ${circularChainText}`);
-      }
+    if (visitingNameSet.has(name)) {
+      const circularChainText = [...visitingNameSet, name].join(' -> ');
 
-      visitingKeySet.add(key);
+      // This `clear()` here should be redundant: if the code reaches here,
+      // this is then not the outermost getter. The set will be cleared by the
+      // upper try...catch.
+      visitingNameSet.clear();
 
-      let entrance;
+      throw new Error(`Circular entrances: ${circularChainText}`);
+    }
 
-      try {
-        entrance = getter.call(this) as unknown;
-      } catch (error) {
-        // We probably only need to clear the set in the uppermost try...catch.
-        // But to write less condition, we do `clear()` in every one of them.
-        visitingKeySet.clear();
+    visitingNameSet.add(name);
 
-        throw error;
-      }
+    let entrance;
 
-      visitingKeySet.delete(key);
+    try {
+      entrance = getter.call(this) as unknown;
+    } catch (error) {
+      // We probably only need to clear the set in the uppermost try...catch.
+      // But to write less condition, we do `clear()` in every one of them.
+      visitingNameSet.clear();
 
-      cachedEntranceMap.set(key, entrance);
+      throw error;
+    }
 
-      return entrance;
-    },
-  };
+    visitingNameSet.delete(name);
+
+    cachedEntranceMap.set(name, entrance);
+
+    return entrance;
+  }
 }
 
 function getEntrancesInstance(object: object): EntrancesInstance;

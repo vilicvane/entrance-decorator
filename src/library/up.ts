@@ -1,3 +1,5 @@
+import {decorated_getter_flag} from './entrance-decorator.js';
+
 export function up<
   TEntrances extends object,
   TInclude extends EntranceKey<TEntrances> | EntranceKeyPattern,
@@ -32,7 +34,15 @@ export async function up(
 
   const entryPromises: Promise<[string, PropertyDescriptor]>[] = [];
 
-  for (const key in entrances) {
+  const keys = getPrototypes(entrances)
+    .flatMap(prototype =>
+      Object.entries(Object.getOwnPropertyDescriptors(prototype)).filter(
+        ([_name, {get}]) => (get ? (get as any)[decorated_getter_flag] : false),
+      ),
+    )
+    .map(([name]) => name);
+
+  for (const key of keys) {
     if (
       !includeMatchers.some(matcher => matcher(key)) ||
       excludeMatchers.some(matcher => matcher(key))
@@ -52,19 +62,18 @@ export async function up(
     );
   }
 
+  const entries = await Promise.all(entryPromises);
+
   if (ref) {
     Object.setPrototypeOf(ref, entrances);
 
-    for (const [key, descriptor] of await Promise.all(entryPromises)) {
+    for (const [key, descriptor] of entries) {
       Object.defineProperty(ref, key, descriptor);
     }
 
     return ref;
   } else {
-    return Object.create(
-      entrances,
-      Object.fromEntries(await Promise.all(entryPromises)),
-    );
+    return Object.create(entrances, Object.fromEntries(entries));
   }
 }
 
@@ -100,4 +109,19 @@ function buildMatcher(pattern: string): (key: string) => boolean {
 
     return key => key.startsWith(prefix) && key.endsWith(postfix);
   }
+}
+
+function getPrototypes(object: object): object[] {
+  const prototypes: object[] = [];
+
+  // eslint-disable-next-line no-cond-assign
+  while ((object = Object.getPrototypeOf(object))) {
+    if (object === Object.prototype) {
+      break;
+    }
+
+    prototypes.push(object);
+  }
+
+  return prototypes;
 }
