@@ -64,6 +64,9 @@
         },
         "license": {
           "type": "boolean"
+        },
+        "discord": {
+          "type": "string"
         }
       },
       "additionalProperties": false
@@ -451,7 +454,10 @@
     "type-32": {
       "type": "object",
       "required": [
-        "name"
+        "name",
+        "type",
+        "defaultBranch",
+        "packageManager"
       ],
       "properties": {
         "name": {
