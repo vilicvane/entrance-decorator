@@ -4,7 +4,10 @@
   "extends": ["plugin:@mufan/javascript"],
   "overrides": [
     {
-      "files": "**/*.{js,jsx}"
+      "files": "**/*.{js,mjs}",
+      "parserOptions": {
+        "sourceType": "module"
+      }
     },
     {
       "files": "**/*.cjs",
