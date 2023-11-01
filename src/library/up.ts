@@ -114,7 +114,6 @@ function buildMatcher(pattern: string): (key: string) => boolean {
 function getPrototypes(object: object): object[] {
   const prototypes: object[] = [];
 
-  // eslint-disable-next-line no-cond-assign
   while ((object = Object.getPrototypeOf(object))) {
     if (object === Object.prototype) {
       break;

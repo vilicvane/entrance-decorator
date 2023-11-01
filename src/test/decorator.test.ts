@@ -100,8 +100,6 @@ test('should work with subclasses', () => {
 
 test('should throw on circular entrances', () => {
   class Entrances {
-    /* eslint-disable @typescript-eslint/explicit-function-return-type */
-
     @entrance
     get foo(): unknown {
       return this.yoha;
@@ -116,8 +114,6 @@ test('should throw on circular entrances', () => {
     get yoha(): unknown {
       return this.foo;
     }
-
-    /* eslint-enable @typescript-eslint/explicit-function-return-type */
   }
 
   const entrances = new Entrances();
@@ -129,14 +125,10 @@ test('should throw on circular entrances', () => {
 
 test('should clear visiting set if getter throws', () => {
   class Entrances {
-    /* eslint-disable @typescript-eslint/explicit-function-return-type */
-
     @entrance
     get foo(): unknown {
       throw new Error('foo error');
     }
-
-    /* eslint-enable @typescript-eslint/explicit-function-return-type */
   }
 
   const entrances = new Entrances();
