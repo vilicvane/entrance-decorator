@@ -1,13 +1,13 @@
 const instanceDataSymbol = Symbol();
 
-interface EntrancesInstanceData {
+type EntrancesInstanceData = {
   visitingKeySet: Set<string>;
   cachedEntranceMap: Map<string, unknown>;
-}
+};
 
-interface EntrancesInstance {
+type EntrancesInstance = {
   [instanceDataSymbol]?: EntrancesInstanceData;
-}
+};
 
 export function entrance(
   _prototype: object,
